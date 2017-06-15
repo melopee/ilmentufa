@@ -12,6 +12,9 @@
   <script src="transcriber.js"></script>
   <script src="translationselbridata.js"></script>
   <script src="bootstrap.js"></script>
+  
+  <script src="d3.v4.9.1.min.js"></script>
+  <!--<script src="smine_blabi.js"></script>-->
  </head>
  <body>
   <div class="container">
@@ -30,7 +33,7 @@
        <a href="glosser.htm#output-options-modal" class="btn" data-toggle="modal"><i class="icon-wrench"></i> Output options</a>
         <div id="output-options-modal" class="modal hide fade" tabindex="-1" role="dialog">
         <div class="modal-header">
-         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
          <h3>Output options</h3>
         </div>
         <div class="modal-body">
@@ -73,14 +76,16 @@
       <li><a id="parse-result-simplified-tab" href="glosser.htm#parse-result-simplified" data-toggle="tab">Simplified tree</a></li>
       <li><a id="parse-result-boxes-tab" href="glosser.htm#parse-result-boxes" data-toggle="tab">Boxes</a></li>
       <li><a id="parse-result-glossing-tab" href="glosser.htm#parse-result-glossing" data-toggle="tab">Glosses</a></li>
+      <li><a id="parse-result-graph-tab" href="glosser.htm#parse-result-graph" data-toggle="tab">Graph</a></li>
      </ul>
      <div class="tab-content">
       <div id="parse-result-highlighted" class="tab-pane active in fade"><i>Here, the sentence will be shown with highlighting...</i></div>
       <div id="parse-result-raw" class="tab-pane fade"><i>Here, the raw parse output will be shown...</i></div>
       <div id="parse-result-tree" class="tab-pane fade"><i>Here, the parse result will be shown as a tree...</i></div>
       <div id="parse-result-simplified" class="tab-pane fade"><i>Here, the parse result will be shown as a simplified tree...</i></div>
-      <div id="parse-result-boxes" class="tab-pane fade"><i>Here, the parse result will be shown as a series of nested boxes (not implemented yet)...</i></div>
+      <div id="parse-result-boxes" class="tab-pane fade"><i>Here, the parse result will be shown as a series of nested boxes...</i></div>
       <div id="parse-result-glossing" class="tab-pane fade"><i>Here, a gloss of the individual words will appear...</i></div>
+      <div id="parse-result-graph" class="tab-pane fade"><i>Here, the parse result will be shown as a graph...</i></div>
      </div>
     </div>
    </div>

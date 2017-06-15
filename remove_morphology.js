@@ -103,4 +103,3 @@ function is_string(v) {
 function is_array(v) {
     return Object.prototype.toString.call(v) === '[object Array]';
 }
-

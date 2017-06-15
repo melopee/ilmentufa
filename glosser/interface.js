@@ -6,6 +6,7 @@ $(document).ready(function() {
  * Launches the parsing process by calling the parser with the data entered in the interface,
  * and processing the results.
  */
+ var qsd;
 function parse() {
     var textToParse = $("#lojban-text-area").val();
     $("#result-row").slideDown();
@@ -40,6 +41,9 @@ function parse() {
             
             var $parseResultGlossing = $("#parse-result-glossing");
             showGlossing(tokens, $parseResultGlossing);
+            
+            var $parseResultGraph = $("#parse-result-graph");
+            showGraph(simplified, $parseResultGraph);
         }
         $("#parse-result-highlighted-tab").html("Highlighted");
         $("#parse-result-tree-tab").html("Parse tree");
@@ -47,6 +51,7 @@ function parse() {
         $("#parse-result-simplified-tab").html("Simplified tree");
         $("#parse-result-boxes-tab").html("Boxes");
         $("#parse-result-glossing-tab").html("Glosses");
+        $("#parse-result-graph-tab").html("Graph");
     } catch (e) {
         if (e.name && e.name === "SyntaxError") {
             $("#parse-result-highlighted-tab").html("<span class=\"muted\">Highlighted</span>");
@@ -61,6 +66,8 @@ function parse() {
             showSyntaxError(e, textToParse, $("#parse-result-boxes"));
             $("#parse-result-glossing-tab").html("<span class=\"muted\">Glosses</span>");
             showSyntaxError(e, textToParse, $("#parse-result-glossing"));
+            $("#parse-result-graph-tab").html("<span class=\"muted\">Graph</span>");
+            showSyntaxError(e, textToParse, $("#parse-result-graph"));
         } else {
             throw e;
         }
@@ -214,6 +221,96 @@ function constructSimplifiedTreeOutput(parse, depth) {
     
     return output;
 }
+
+/**
+ * Shows the graph in the interface.
+ */
+function showGraph(simplified, $element) {
+    $element.html(setArena(simplified[0],0));
+    constructGraph(simplified[0]);
+}
+
+function setArena(parse, depth) {
+  if (depth > 50) {
+      return "<b>too much recursion :-(</b>";
+  }
+  if (parse === null) {
+      return "<i>(none?)</i>";
+  }
+  if (!parse) {
+      return "<i>(undefined?)</i>";
+  }
+  return "<svg></svg>"
+}
+
+function constructGraph(parse) {
+  var root = d3.hierarchy(parse)
+  var width = 700,
+    height = root.height * 100
+ //
+  var svg = d3.select("svg")//.append("svg")
+    .attr("width", width)
+    .attr("height", height);
+    //width = +svg.attr("width"),
+    //height = +svg.attr("height"),
+    g = svg.append("g").attr("transform", "translate(40,0)");
+// */
+  var tree = d3.tree()
+      .size([height, width - 160])
+
+  bajra =  function(data) {
+    console.log(root)
+    var link = g.selectAll(".link")
+      .data(tree(root).links())
+      .enter().append("path")
+        .attr("class", "link")
+        .attr("d", d3.linkHorizontal()
+            .x(function(d) { return d.y; })
+            .y(function(d) { return d.x; }));
+
+    var node = g.selectAll(".node")
+      .data(root.descendants())
+      .enter().append("g")
+        .attr("class", 
+        function (simplified) {
+            var ret
+        if (simplified.data.type === "selbri") {
+            ret = "lojban-selbri"
+        } else if (simplified.data.type === "modal sumti") {
+            ret = "lojban-modal"
+        } else if (simplified.data.type === "sumti x") {
+            if (simplified.data.sumtiPlace > 5) {
+                ret = "lojban-sumti6"
+            } else {
+                ret = "lojban-sumti" + simplified.sumtiPlace;
+            }
+        } else if (simplified.data.type === "prenex") {
+            ret="lojban-prenex"
+        } else if (simplified.data.type === "free") {
+            ret="lojban-vocative"
+        }
+        if (simplified.data.word) {
+            ret="lojban-separator"
+        }
+        return ret;})
+        //function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
+        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+        
+        .append("circle")
+        .attr("r", 5)
+        
+        .attr("stroke","#000000")
+        .attr("stroke-width","0.3px")
+        
+    node.append("text")
+        .attr("dy", 10)
+        .attr("x", function(d) { return d.children ? -8 : 8; })
+        //.style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+        .text(function(d) { return d.data.type })
+  };
+  bajra(parse)
+}
+
 
 /**
  * Shows the boxes in the interface.
