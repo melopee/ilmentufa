@@ -1,12 +1,10 @@
 $(document).ready(function() {
     $('label').popover();
 });
-
 /**
  * Launches the parsing process by calling the parser with the data entered in the interface,
  * and processing the results.
  */
- var qsd;
 function parse() {
     var textToParse = $("#lojban-text-area").val();
     $("#result-row").slideDown();
@@ -243,23 +241,55 @@ function setArena(parse, depth) {
   return "<svg></svg>"
 }
 
+function staword(ast) {
+    if (ast.children) {
+      for (var i = 0; i < ast.children.length; i++) {
+        staword(ast.children[i])
+      }
+    }
+    if (ast.word) {
+      ast.children = [{type:ast.word}]
+    }
+    return ast
+}
+var permBox;
+permBox = false
 function constructGraph(parse) {
-  var root = d3.hierarchy(parse)
-  var width = 700,
+  permBox= true
+  var root = d3.hierarchy(staword(parse))
+  var width = 900,
     height = root.height * 100
  //
   var svg = d3.select("svg")//.append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("scroll-x","auto")
     //width = +svg.attr("width"),
     //height = +svg.attr("height"),
     g = svg.append("g").attr("transform", "translate(40,0)");
 // */
-  var tree = d3.tree()
-      .size([height, width - 160])
+  var tree;
+  switch (getSelectedGraph()) {
+    case 1:
+      tree = d3.tree()
+      break;
+      
+    case 2:
+      tree = d3.cluster()
+      break;
+      
+    case 3:
+      tree = d3.cluster()
+      break;
+      
+    default:
+      tree = d3.tree()
+      break;
+  }
+  tree.size([height, width - 160])
 
   bajra =  function(data) {
-    console.log(root)
+    console.dir(root)
     var link = g.selectAll(".link")
       .data(tree(root).links())
       .enter().append("path")
@@ -271,46 +301,35 @@ function constructGraph(parse) {
     var node = g.selectAll(".node")
       .data(root.descendants())
       .enter().append("g")
-        .attr("class", 
-        function (simplified) {
-            var ret
-        if (simplified.data.type === "selbri") {
-            ret = "lojban-selbri"
-        } else if (simplified.data.type === "modal sumti") {
-            ret = "lojban-modal"
-        } else if (simplified.data.type === "sumti x") {
-            if (simplified.data.sumtiPlace > 5) {
-                ret = "lojban-sumti6"
-            } else {
-                ret = "lojban-sumti" + simplified.sumtiPlace;
-            }
-        } else if (simplified.data.type === "prenex") {
-            ret="lojban-prenex"
-        } else if (simplified.data.type === "free") {
-            ret="lojban-vocative"
-        }
-        if (simplified.data.word) {
-            ret="lojban-separator"
-        }
-        return ret;})
-        //function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
+        .attr("class", function(d){return boxClassForType(d.data)})
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
         
-        .append("circle")
-        .attr("r", 5)
-        
-        .attr("stroke","#000000")
-        .attr("stroke-width","0.3px")
+    node.append("circle")
+        .attr("r", 6)
+        .attr("stroke","#ffffff")
+        .attr("stroke-width","0.5px")
         
     node.append("text")
-        .attr("dy", 10)
+        .attr("dy", function(d) { return d.children ? 12 : 3; })
         .attr("x", function(d) { return d.children ? -8 : 8; })
-        //.style("text-anchor", function(d) { return d.children ? "end" : "start"; })
-        .text(function(d) { return d.data.type })
+        .attr("font-size",    function(d, i) {  return  "1em"; })
+        .attr("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
+        .attr("color","#000000")
+        .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+        .attr("transform", function(d) { return d.children ? "rotate(" + -27 +  ")" : undefined })
+        .text(function(d) {
+          if (d.data.type === "sumti x") {
+              if (d.data.sumtiPlace > 5) {
+                  return d.data.type + "6";
+              } else if (d.data.sumtiPlace == "fai") {
+                  return d.data.type + "fai";
+              } else {
+                  return d.data.type + d.data.sumtiPlace;
+              }}
+        return d.data.type})
   };
   bajra(parse)
 }
-
 
 /**
  * Shows the boxes in the interface.
@@ -332,7 +351,7 @@ function showBoxes(simplified, $element) {
 }
 
 function constructBoxesOutput(parse, depth) {
-    
+    permBox = false;
     // precaution against infinite recursion; this should not actually happen of course
     if (depth > 50) {
         return "<b>too much recursion :-(</b>";
@@ -389,10 +408,16 @@ function constructBoxesOutput(parse, depth) {
 }
 
 function boxClassForType(parse) {
-    
-    if (parse.type === "sentence") {
-        return "box box-sentence";
+    if (permBox) {
+      if (parse.type === "text") {return "box-text";}
+      if (parse.type === "bridi-tail") {return "box-bridi-tail";}
+      if (parse.type === "sumka'i") {return "box-sumkahi";}
+      if (parse.type === "gismu") {return "box-gismu";}
+      if (parse.type === "fu'ivla") {return "box-fuhivla";}
+      if (parse.type === "lujvo") {return "box-lujvo";}
+      if (!parse.children && !parse.word) {return "box-word";}
     }
+    if (parse.type === "sentence") {return "box box-sentence";}
     
     if (parse.type === "sumti x") {
         if (parse.sumtiPlace > 5) {
@@ -664,6 +689,16 @@ function getSelectedMode() {
         return 3;
     } else if ($("#hiragana-button").hasClass('active')) {
         return 4;
+    }
+}
+
+function getSelectedGraph() {
+    if ($("#tree-button").hasClass('active')) {
+        return 1;
+    } else if ($("#dendro-button").hasClass('active')) {
+        return 2;
+    } else if ($("#bubble-button").hasClass('active')) {
+        return 3;
     }
 }
 

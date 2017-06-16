@@ -1,0 +1,119 @@
+        function (simplified) {
+        if (simplified.type === "selbri") {
+            return "flojban-selbri"
+        } else if (simplified.type === "modal sumti") {
+            return "flojban-modal"
+        } else if (simplified.type === "sumti x") {
+            return "flojban-sumti6"
+        } else if (simplified.type === "prenex") {
+            return "flojban-prenex"
+        } else if (simplified.type === "free") {
+            return "flojban-vocative"
+        } else if (simplified.data.word) {
+            return "flojban-separator"
+        }
+        return "flojban-default";})
+
+
+
+
+
+##
+
+.flojban-default {
+    fill: crimson;
+}
+
+.flojban-separator {
+    fill: #aaaaaa;
+}
+
+.flojban-selbri {
+    font-weight: bold;
+    fill: #6699cc;
+}
+
+.flojban-sumti1 {
+    fill: #dd3322;
+}
+
+.flojban-sumti2 {
+    fill: #cc5522;
+}
+
+.flojban-sumti3 {
+    fill: #bb7722;
+}
+
+.flojban-sumti4 {
+    fill: #aa9922;
+}
+
+.flojban-sumti5 {
+    fill: #99bb22;
+}
+
+.flojban-sumti6 {
+    fill: #88dd22;
+}
+
+.flojban-modal {
+    fill: #339944;
+}
+
+.flojban-prenex {
+    fill: #2288aa;
+}
+
+.flojban-vocative {
+    fill: #8822aa;
+}
+
+.flojban-indicator {
+    fill: #446699;
+}
+
+
+.hyper {
+    color: blue;
+    font-weight: bold;
+}
+
+
+
+/*
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    width: 120px;
+       top: 100%;
+       left: 50%;
+       margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+*/

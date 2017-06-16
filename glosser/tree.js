@@ -34,8 +34,7 @@ function simplifyTree(parse) {
         return [{
             type: parse[0],
             word: parse[1]
-        }]
-    }
+    }]}
     
     var f = simplifyFunctions[parse[0]];
     

@@ -1,27 +1,9 @@
-.node circle {
-  fill: #999;
-}
-
-.node text {
-  font: 10px sans-serif;
-}
-
-.node--internal circle {
-  fill: #555;
-}
-
-.node--internal text {
-  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-}
-
 .link {
   fill: none;
   stroke: #555;
   stroke-opacity: 0.4;
   stroke-width: 1.5px;
 }
-
-
 
 body, textarea {
     font-family: sans-serif !important;
@@ -153,50 +135,85 @@ li.implicit {
 
 .box.box-sentence {
     background: #aaccee;
+    fill: #aaccee;
 }
 
 .box.box-sumti {
     background: #f099aa;
+    fill: #f099aa;
 }
 
 .box.box-sumti-fai {
     background: #dd9966;
+    fill: #dd9966;
 }
 
 .box.box-sumti1 {
     background: #f099aa;
+    fill: #f099aa;
 }
 
 .box.box-sumti2 {
     background: #e8aaaa;
+    fill: #e8aaaa;
 }
 
 .box.box-sumti3 {
     background: #e0bbaa;
+    fill: #e0bbaa;
 }
 
 .box.box-sumti4 {
     background: #d8ccaa;
+    fill: #d8ccaa;
 }
 
 .box.box-sumti5 {
     background: #d0ddaa;
+    fill: #d0ddaa;
 }
 
 .box.box-sumti6 {
     background: #c8eeaa;
+    fill: #c8eeaa;
 }
 
 .box.box-modal {
     background: #88cc99;
+    fill: #88cc99;
 }
 
 .box.box-selbri {
     background: #ccaadd;
+    fill: #ccaadd;
 }
 
 .box.box-prenex {
     background: #88bbdd;
+    fill: #88bbdd;
+}
+
+.box-text {
+  fill: 938888
+}
+.box-bridi-tail {
+  fill: #7b9ec2;
+}
+.box-sumkahi {
+  fill: #b34d61
+}
+.box-gismu {
+  fill: #2faa4d
+}
+.box-fuhivla {
+  fill: #981fd5;
+}
+.box-lujvo {
+  fill: #ef3a9a
+}
+
+.box-word {
+  fill: #727272
 }
 
 .box.box-terminal {
@@ -209,6 +226,7 @@ li.implicit {
     margin: 0px;
     padding: 0px;
     border: 0px;
+    fill: #aaaaaa;
 }
 
 .box span.translation {
