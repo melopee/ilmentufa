@@ -254,50 +254,47 @@ function staword(ast) {
 }
 var permBox;
 permBox = false
+
 function constructGraph(parse) {
   permBox= true
   var root = d3.hierarchy(staword(parse))
   var width = 900,
     height = root.height * 100
- //
-  var svg = d3.select("svg")//.append("svg")
+ 
+  var svg = d3.select("svg")
     .attr("width", width)
     .attr("height", height)
-    .attr("scroll-x","auto")
-    //width = +svg.attr("width"),
-    //height = +svg.attr("height"),
-    g = svg.append("g").attr("transform", "translate(40,0)");
-// */
-  var tree;
+    .attr("overflow-y","scroll")
+    .attr("overflow-x","scroll"),
+  g = svg.append("g").attr("transform", "translate(40,0)");
+
+  var beast;
   switch (getSelectedGraph()) {
     case 1:
-      tree = d3.tree()
+      beast = d3.tree()
       break;
       
     case 2:
-      tree = d3.cluster()
+      beast = d3.cluster()
       break;
-      
-    case 3:
-      tree = d3.cluster()
-      break;
-      
+
     default:
-      tree = d3.tree()
+      beast = d3.tree()
       break;
   }
-  tree.size([height, width - 160])
+  
+  beast.size([height, width - 160])
 
   bajra =  function(data) {
-    console.dir(root)
+
     var link = g.selectAll(".link")
-      .data(tree(root).links())
+      .data(beast(root).links())
       .enter().append("path")
         .attr("class", "link")
         .attr("d", d3.linkHorizontal()
-            .x(function(d) { return d.y; })
-            .y(function(d) { return d.x; }));
-
+        .x(function(d) { return d.y; })
+        .y(function(d) { return d.x; }))
+    
     var node = g.selectAll(".node")
       .data(root.descendants())
       .enter().append("g")
@@ -305,7 +302,7 @@ function constructGraph(parse) {
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
         
     node.append("circle")
-        .attr("r", 6)
+        .attr("r", 7)
         .attr("stroke","#ffffff")
         .attr("stroke-width","0.5px")
         
@@ -316,7 +313,7 @@ function constructGraph(parse) {
         .attr("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
         .attr("color","#000000")
         .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
-        .attr("transform", function(d) { return d.children ? "rotate(" + -27 +  ")" : undefined })
+        .attr("transform", function(d) { return d.children ? "rotate(" + -20 +  ")" : undefined })
         .text(function(d) {
           if (d.data.type === "sumti x") {
               if (d.data.sumtiPlace > 5) {
