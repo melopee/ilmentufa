@@ -252,15 +252,23 @@ function staword(ast) {
     }
     return ast
 }
+
+function linkage(d) {
+  return "M" + d.y + "," + d.x
+      + "C" + (d.parent.y) + "," + d.x
+      + " " + (d.parent.y) + "," + d.parent.x
+      + " " + d.parent.y + "," + d.parent.x;
+}
+
 var permBox;
 permBox = false
 
 function constructGraph(parse) {
   permBox= true
   var root = d3.hierarchy(staword(parse))
-  var width = 900,
-    height = root.height * 100
- 
+  
+  var width = 700 + Math.pow(root.height,1.5)*11,
+    height = tokens.length*25 + Math.pow(tokens.length/4,2)
   var svg = d3.select("svg")
     .attr("width", width)
     .attr("height", height)
@@ -268,32 +276,30 @@ function constructGraph(parse) {
     .attr("overflow-x","scroll"),
   g = svg.append("g").attr("transform", "translate(40,0)");
 
-  var beast;
-  switch (getSelectedGraph()) {
-    case 1:
-      beast = d3.tree()
-      break;
-      
-    case 2:
-      beast = d3.cluster()
-      break;
 
-    default:
-      beast = d3.tree()
-      break;
-  }
-  
-  beast.size([height, width - 160])
+var tree = d3.tree().size([height, width - 160])
+var cluster = d3.cluster().size([height, width - 160])
 
   bajra =  function(data) {
+    switch (getSelectedGraph()) {
+      case 1:
+        tree(root)
+        break;
+        
+      case 0:
+        cluster(root)
+        break;
 
+      default:
+        console.log("possible on error on the graph type, default graph displayed")
+        break;
+    }
+    
     var link = g.selectAll(".link")
-      .data(beast(root).links())
+      .data(root.descendants().slice(1))
       .enter().append("path")
         .attr("class", "link")
-        .attr("d", d3.linkHorizontal()
-        .x(function(d) { return d.y; })
-        .y(function(d) { return d.x; }))
+        .attr("d", linkage)
     
     var node = g.selectAll(".node")
       .data(root.descendants())
@@ -324,6 +330,19 @@ function constructGraph(parse) {
                   return d.data.type + d.data.sumtiPlace;
               }}
         return d.data.type})
+  
+    d3.select("form #tree-button")
+      .on("click",changed)
+    
+    d3.select("form #dendro-button")
+      .on("click",changed)
+      
+    function changed() {
+      ((getSelectedGraph()) ? tree : cluster)(root)
+      var t = d3.transition().duration(700);
+      node.transition(t).attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+      link.transition(t).attr("d",linkage)
+    } 
   };
   bajra(parse)
 }
@@ -693,9 +712,7 @@ function getSelectedGraph() {
     if ($("#tree-button").hasClass('active')) {
         return 1;
     } else if ($("#dendro-button").hasClass('active')) {
-        return 2;
-    } else if ($("#bubble-button").hasClass('active')) {
-        return 3;
+        return 0;
     }
 }
 
