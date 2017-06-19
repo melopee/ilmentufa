@@ -253,7 +253,7 @@ function staword(ast) {
     return ast
 }
 
-function linkage(d) {
+function diaglin(d) {
   return "M" + d.y + "," + d.x
       + "C" + (d.parent.y) + "," + d.x
       + " " + (d.parent.y) + "," + d.parent.x
@@ -268,7 +268,7 @@ function constructGraph(parse) {
   var root = d3.hierarchy(staword(parse))
   
   var width = 700 + Math.pow(root.height,1.5)*11,
-    height = tokens.length*25 + Math.pow(tokens.length/4,2)
+    height = tokens.length*25 + Math.pow(tokens.length/4,2) + 30
   var svg = d3.select("svg")
     .attr("width", width)
     .attr("height", height)
@@ -277,8 +277,8 @@ function constructGraph(parse) {
   g = svg.append("g").attr("transform", "translate(40,0)");
 
 
-var tree = d3.tree().size([height, width - 160])
-var cluster = d3.cluster().size([height, width - 160])
+var tree = d3.tree().size([height - 30, width - 160])
+var cluster = d3.cluster().size([height - 30, width - 160])
 
   bajra =  function(data) {
     switch (getSelectedGraph()) {
@@ -299,7 +299,7 @@ var cluster = d3.cluster().size([height, width - 160])
       .data(root.descendants().slice(1))
       .enter().append("path")
         .attr("class", "link")
-        .attr("d", linkage)
+        .attr("d", diaglin)
     
     var node = g.selectAll(".node")
       .data(root.descendants())
@@ -341,7 +341,7 @@ var cluster = d3.cluster().size([height, width - 160])
       ((getSelectedGraph()) ? tree : cluster)(root)
       var t = d3.transition().duration(700);
       node.transition(t).attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
-      link.transition(t).attr("d",linkage)
+      link.transition(t).attr("d",diaglin)
     } 
   };
   bajra(parse)
